@@ -6,5 +6,5 @@ dotenv.config({
 });
 
 connectDB()
-  .then(() => app.listen(`${process.env.PORT || 5000}`));
+  .then(() => app.listen(`${process.env.PORT || 5000}`))
   .catch((err) => console.log("Mongoose something went wrong", err));
