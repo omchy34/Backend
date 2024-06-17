@@ -1,15 +1,19 @@
-import express from 'express'
+import express from "express";
+import cookieParser from "cookie-parser";
 
 const app = express();
-const port = 2000
-
-app.get('/', (req, res) => {
-    res.send('Hello World!')
+app.use(
+  express.urlencoded({
+    extended: true,
+    limit: "1mb",
   })
-  
-  app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+);
+app.use(express.static("public"));
+app.use(cookieParser());
+app.listen(
+  express.json({
+    limit: "1mb",
   })
+);
 
-
-export { app }
+export { app };
