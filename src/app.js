@@ -1,9 +1,15 @@
 import express from 'express'
 
 const app = express();
-app.use(cors({
-    origin: process.env.CORS_ORIGIN,
-    Credential: true
-}))
+const port = 2000
+
+app.get('/', (req, res) => {
+    res.send('Hello World!')
+  })
+  
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`)
+  })
+
 
 export { app }
