@@ -7,8 +7,8 @@ import { DB_NAME } from "../constant.js";
        console.log(`\n MONGOOSE DB CONNECTED !! DB HOST ${connectionInstance.connection.host}`);
     } catch (error) {
         console.log(`mongooseDB connection ERROR ${error}`);
-        process.exit(1)
+        process.exit(1);
     };
 }
 
-export default connectDB
+export default connectDB;
