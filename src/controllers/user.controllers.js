@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { User } from "../modle/user.modle.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import jwt from "jsonwebtoken"
 
 const generateAccessAndRefreshTocken = async (userId) => {
   try {
@@ -88,7 +89,7 @@ const LoginUser = asyncHandler(async (req, res) => {
   //  send cookie
 
   const { userName, email, password } = req.body;
-  if (!(userName || email)) {
+  if (!userName && !email) {
     throw new ApiError(400, "userName and email is required");
   }
 
