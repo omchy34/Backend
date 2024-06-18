@@ -6,7 +6,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
-const generateAccessAndRefreshtoken = async(userId) => {
+const generateAccessAndRefreshtoken = async (userId) => {
   try {
     const user = await User.findById(userId);
     const accessToken = await user.generateAccessToken();
@@ -95,7 +95,7 @@ const LoginUser = asyncHandler(async (req, res) => {
   //  send cookie
 
   const { userName, email, password } = req.body;
-  console.log(req.body);
+  // console.log(req.body);
   if (!userName && !email) {
     throw new ApiError(400, "userName is required");
   }
@@ -146,7 +146,7 @@ const LoggedOut = asyncHandler(async (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: { refreshtoken: undefined },
+      $unset: { refreshtoken: undefined },
     },
     {
       new: true,
@@ -162,7 +162,9 @@ const LoggedOut = asyncHandler(async (req, res) => {
     .status(200)
     .clearCookie("accessToken", options)
     .clearCookie("refreshToken", options)
-    .json(200, {}, "user Logged Out");
+    .json(new ApiResponse(200 , {} , "User LoggedOut"));
 });
+
+
 
 export { registerUser, LoginUser, LoggedOut };
