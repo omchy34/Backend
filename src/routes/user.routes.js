@@ -19,6 +19,6 @@ const router = Router();
 
     // secured Routes
     router.route("/Logout").post(verifyJWT, LoggedOut);
-    router.route("/refresh-Token").post()
+    router.route("/refresh-Token").post(refreshAccessToken)
     
 export default router;
