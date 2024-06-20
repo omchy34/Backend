@@ -94,15 +94,19 @@ const LoginUser = asyncHandler(async (req, res) => {
   // acces and refresh token
   //  send cookie
 
-  const { userName, email, password } = req.body;
-  // console.log(req.body);
-  if (!userName && !email) {
-    throw new ApiError(400, "userName is required");
+  const { identifier , password } = req.body;
+
+  console.log(req.body);
+
+  if (!identifier) {
+    throw new ApiError(400, "userName and email is required");
   }
 
   const user = await User.findOne({
-    $or: [{ userName }, { email }],
+    $or: [{ email: identifier }, { userName: identifier }],
   });
+
+
   if (!user) {
     throw new ApiError(404, "user dose not exist");
   }
@@ -146,7 +150,7 @@ const LoggedOut = asyncHandler(async (req, res) => {
   User.findByIdAndUpdate(
     req.user._id,
     {
-      $unset: { refreshtoken: undefined },
+      $set: { refreshtoken: undefined },
     },
     {
       new: true,
