@@ -126,8 +126,10 @@ const LoginUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: false,
   };
+  console.log(accessToken);
+  console.log(refreshToken);
 
   return res
     .status(200)
@@ -147,10 +149,10 @@ const LoginUser = asyncHandler(async (req, res) => {
 });
 
 const LoggedOut = asyncHandler(async (req, res) => {
-  User.findByIdAndUpdate(
+  await User.findByIdAndUpdate(
     req.user._id,
     {
-      $set: { refreshtoken: undefined },
+      $unset: { refreshtoken: 1 },
     },
     {
       new: true,
@@ -159,12 +161,12 @@ const LoggedOut = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: true,
+    secure: false,
   };
 
   return res
     .status(200)
-    .clearCookie("accessToken", options)
+    .clearCookie("accessToken",  options)
     .clearCookie("refreshToken", options)
     .json(new ApiResponse(200, {}, "User LoggedOut"));
 });
