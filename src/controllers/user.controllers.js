@@ -94,7 +94,7 @@ const LoginUser = asyncHandler(async (req, res) => {
   // acces and refresh token
   //  send cookie
 
-  const { identifier , password } = req.body;
+  const { identifier, password } = req.body;
 
   console.log(req.body);
 
@@ -126,50 +126,49 @@ const LoginUser = asyncHandler(async (req, res) => {
 
   const options = {
     httpOnly: true,
-    secure: false,
+    // secure: true,
   };
   console.log(accessToken);
   console.log(refreshToken);
 
+
   return res
     .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
+    // .cookie("accessToken", accessToken , options)
+    // .cookie("refreshToken", refreshToken , options)
     .json(
       new ApiResponse(
         200,
         {
-          LoggedInUser: loggedInUser,
+          loggedInUser,
           accessToken,
-          refreshToken,
+         refreshToken,
         },
         "user LoggedIn successFully "
-      )
+      ),
     );
 });
 
-const LoggedOut = asyncHandler(async (req, res) => {
-  await User.findByIdAndUpdate(
-    req.user._id,
-    {
-      $unset: { refreshtoken: 1 },
-    },
-    {
-      new: true,
-    }
-  );
+// const LoggedOut = asyncHandler(async (req, res) => {
+//   await User.findByIdAndUpdate(
+//     req.user._id,
+//     {
+//       $unset: { refreshtoken: 1 },
+//     },
+//     {
+//       new: true,
+//     }
+//   );
 
-  const options = {
-    httpOnly: true,
-    secure: false,
-  };
+//   // const options = {
+//   //   httpOnly: true,
+//   //   secure: false,
+//   // };
 
-  return res
-    .status(200)
-    .clearCookie("accessToken",  options)
-    .clearCookie("refreshToken", options)
-    .json(new ApiResponse(200, {}, "User LoggedOut"));
-});
+//   return res
+//     .status(200)
+//     .json(new ApiResponse(200, {}, "User LoggedOut"));
+// });
 
 const refreshAccessToken = asyncHandler(async (req, res) => {
   const incommingRefreshToken =
@@ -193,7 +192,7 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
 
     const options = {
       httpOnly: true,
-      secure: true,
+      secure: false,
     };
 
     const { accessToken, newRefreshToken } =
@@ -211,8 +210,8 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
         )
       );
   } catch (error) {
-    throw new ApiError(401 , error.message || "invalid refresh token ")
+    throw new ApiError(401, error.message || "invalid refresh token ")
   }
 });
 
-export { registerUser, LoginUser, LoggedOut , refreshAccessToken };
+export { registerUser, LoginUser,  refreshAccessToken };
