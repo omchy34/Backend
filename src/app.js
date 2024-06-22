@@ -7,7 +7,7 @@ const app = express();
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
-    methods : "POST , GET , DELETE , PATCH , HEAD",
+    methods: "POST , GET , DELETE , PATCH , HEAD",
     credentials: true,
   })
 );
@@ -30,5 +30,5 @@ app.use(cookieParser());
 import userRouter from './routes/user.routes.js'
 
 //routes decleartion
-app.use("/api/v1/users" , userRouter)
+app.use("/api/v1/users", userRouter)
 export { app };
