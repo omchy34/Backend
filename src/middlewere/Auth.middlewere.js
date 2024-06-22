@@ -28,7 +28,7 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
     // Attach the user and token to the request object
     req.user = user;
     req.token = token;
-    
+
     next();
   } catch (error) {
     console.error("JWT verification error:", error);

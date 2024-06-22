@@ -19,7 +19,7 @@ const fileFilter = (req, file, cb) => {
   if (allowedTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
-    cb( new ApiError(400, "Invalid file type. Only image files are allowed."), false);
+    cb(new ApiError(400, "Invalid file type. Only image files are allowed."), false);
   }
 };
 
