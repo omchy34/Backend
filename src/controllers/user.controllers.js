@@ -142,7 +142,7 @@ const LoginUser = asyncHandler(async (req, res) => {
         {
           loggedInUser,
           accessToken,
-         refreshToken,
+          refreshToken,
         },
         "user LoggedIn successFully "
       ),
@@ -214,18 +214,18 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
-const userData = asyncHandler( async (req , res) => {
+const userData = asyncHandler(async (req, res) => {
   try {
-    
+
     return res.json(
-       new ApiResponse(200, {
+      new ApiResponse(200, {
         user: req.user,
-        token : req.token,
-       })
+        token: req.token,
+      })
     )
   } catch (error) {
-    
+
   }
 })
 
-export { registerUser, LoginUser,  refreshAccessToken , userData };
+export { registerUser, LoginUser, refreshAccessToken, userData };
