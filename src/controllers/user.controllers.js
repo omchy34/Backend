@@ -214,4 +214,18 @@ const refreshAccessToken = asyncHandler(async (req, res) => {
   }
 });
 
-export { registerUser, LoginUser,  refreshAccessToken };
+const userData = asyncHandler( async (req , res) => {
+  try {
+    
+    return res.json(
+       new ApiResponse(200, {
+        user: req.user,
+        token : req.token,
+       })
+    )
+  } catch (error) {
+    
+  }
+})
+
+export { registerUser, LoginUser,  refreshAccessToken , userData };
