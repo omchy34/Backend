@@ -8,9 +8,13 @@ import {
 import { upload } from "../middlewere/multer.middlewere.js";
 import { verifyJWT } from "../middlewere/Auth.middlewere.js";
 import multer from "multer";
-
+import { validate } from "../middlewere/validations.middlewere.js";
+import { signupSchema } from "../Validations/user.validations.js";
 
 const router = Router();
+
+console.log("validate:", validate); // Should log the validate function
+console.log("registerUser:", registerUser); // Should log the registerUser function
 
 router
   .route("/Register")
@@ -24,14 +28,12 @@ router
         next();
       }
     });
-  }, registerUser);
-
+  }, validate(signupSchema), registerUser);
 
 router.route("/Login").post(LoginUser);
 
 // secured Routes
-// router.route("/Logout").post( LoggedOut);
-router.route("/refresh-Token").post(refreshAccessToken)
-router.route("/userData").post(verifyJWT, userData)
+router.route("/refresh-Token").post(refreshAccessToken);
+router.route("/userData").post(verifyJWT, userData);
 
 export default router;
