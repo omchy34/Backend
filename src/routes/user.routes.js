@@ -8,8 +8,8 @@ import {
 import { upload } from "../middlewere/multer.middlewere.js";
 import { verifyJWT } from "../middlewere/Auth.middlewere.js";
 import multer from "multer";
-import { validate } from "../middlewere/validations.middlewere.js";
-import { signupSchema } from "../Validations/user.validations.js";
+import { validate } from "../middlewere/validations.middlewere.js"
+import { signupSchema } from "../Validations/user.Rej.validations.js";
 
 const router = Router();
 

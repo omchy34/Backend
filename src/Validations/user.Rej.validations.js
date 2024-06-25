@@ -3,6 +3,7 @@ import * as z from 'zod';
 
 // Creating an object schema
 const signupSchema = z.object({
+
   fullName: z
     .string({ required_error: "fullName is required" })
     .trim()
@@ -11,8 +12,8 @@ const signupSchema = z.object({
   userName: z
     .string({ required_error: "userName is required" })
     .trim()
-    .min(3, { message: "Name must be at least of 3 characters" })
-    .max(255, { message: "Name must not be more than 255 characters" }),
+    .min(3, { message: "UserName must be at least of 3 characters" })
+    .max(255, { message: "UserName must not be more than 255 characters" }),
   email: z
     .string({ required_error: "Email is required" })
     .trim()

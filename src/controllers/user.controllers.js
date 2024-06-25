@@ -25,66 +25,49 @@ const generateAccessAndRefreshtoken = async (userId) => {
   }
 };
 
+// controllers/user.controller.js
 const registerUser = asyncHandler(async (req, res) => {
-  // get user data from frontend
-  // validation
-  // check user alredy exist or not : username email
-  // check for avatar
-  // upload on cloudinary
-  // success or not in cloudinary
-  // create user obj - create entery in db
-  // reemove pass and refresh token filed from response
-  // check user creation
-  // return res
-
   const { fullName, userName, email, password } = req.body;
-  //   console.log(req.body);
-  if (
-    [fullName, userName, email, password].some((filed) => filed?.trim() === "")
-  ) {
-    throw new ApiError(400, "all filed are required");
+  
+  if ([fullName, userName, email, password].some(field => field?.trim() === "")) {
+    throw new ApiError(400, "All fields are required");
   }
 
   const existUser = await User.findOne({
     $or: [{ userName }, { email }],
   });
+
   if (existUser) {
-    throw new ApiError(409, "user with email and username is already exist");
+    throw new ApiError(409, "User with email or username already exists");
   }
 
-  const avatarLocalFile = req.files?.avatar[0].path;
-  //   console.log(req.files);
+  const avatarLocalFile = req.files?.avatar[0]?.path;
+
   if (!avatarLocalFile) {
     throw new ApiError(400, "Avatar file is required");
   }
 
   const avatar = await uploadOnCloudinary(avatarLocalFile);
   if (!avatar) {
-    throw new ApiError(400, "Avatar file is required");
+    throw new ApiError(400, "Avatar upload failed");
   }
 
   const user = await User.create({
     fullName,
-    userName: userName,
+    userName,
     avatar: avatar.url,
     email,
     password,
   });
 
-  const createdUser = await User.findById(user._id).select(
-    "-password -refreshtoken"
-  );
+  const createdUser = await User.findById(user._id).select("-password -refreshToken");
   if (!createdUser) {
-    throw new ApiError(
-      500,
-      "something went wrong while user registering the user"
-    );
+    throw new ApiError(500, "Something went wrong while registering the user");
   }
 
-  return res
-    .status(201)
-    .json(new ApiResponse(200, createdUser, "User Registered successfully"));
+  return res.status(201).json(new ApiResponse(201, createdUser, "User Registered successfully"));
 });
+
 
 const LoginUser = asyncHandler(async (req, res) => {
   // req.body - data
