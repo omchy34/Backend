@@ -27,7 +27,7 @@ const generateAccessAndRefreshtoken = async (userId) => {
 
 // controllers/user.controller.js
 const registerUser = asyncHandler(async (req, res) => {
-  const { fullName, userName, email, password } = req.body;
+  const { fullName, userName, email, password  } = req.body;
   
   if ([fullName, userName, email, password].some(field => field?.trim() === "")) {
     throw new ApiError(400, "All fields are required");
@@ -41,13 +41,13 @@ const registerUser = asyncHandler(async (req, res) => {
     throw new ApiError(409, "User with email or username already exists");
   }
 
-  const avatarLocalFile = req.files?.avatar[0]?.path;
+  const avatarLocalPath = req.files?.avatar[0]?.path;
 
-  if (!avatarLocalFile) {
+  if (!avatarLocalPath) {
     throw new ApiError(400, "Avatar file is required");
   }
 
-  const avatar = await uploadOnCloudinary(avatarLocalFile);
+  const avatar = await uploadOnCloudinary(avatarLocalPath);
   if (!avatar) {
     throw new ApiError(400, "Avatar upload failed");
   }
@@ -55,9 +55,9 @@ const registerUser = asyncHandler(async (req, res) => {
   const user = await User.create({
     fullName,
     userName,
-    avatar: avatar.url,
     email,
     password,
+    avatar: avatar.url
   });
 
   const createdUser = await User.findById(user._id).select("-password -refreshToken");
@@ -111,8 +111,8 @@ const LoginUser = asyncHandler(async (req, res) => {
     httpOnly: true,
     // secure: true,
   };
-  console.log(accessToken);
-  console.log(refreshToken);
+  // console.log(accessToken);
+  // console.log(refreshToken);
 
 
   return res
@@ -202,7 +202,7 @@ const userData = asyncHandler(async (req, res) => {
 
     return res.json(
       new ApiResponse(200, {
-        user: req.user,
+        user: req.user, 
         token: req.token,
       })
     )
