@@ -28,7 +28,9 @@ app.use(cookieParser());
 
 // import routes
 import userRouter from './routes/user.routes.js'
+import AddItemRouter from "./routes/AddItem.routes.js";
 
 //routes decleartion
 app.use("/api/v1/users", userRouter)
+app.use("/api/v1/Admin", AddItemRouter)
 export { app };
