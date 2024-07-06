@@ -19,7 +19,7 @@ const signupSchema = z.object({
     .min(3, { message: "Email must be at least of 3 characters" })
     .max(255, { message: "Email must not be more than 255 characters" }),
   phone: z
-    .number({ required_error: "Phone is required" })
+    .string({ required_error: "Phone is required" })
     .trim()
     .min(10, { message: "Phone number must be at least of 10 digit" })
     .max(12, { message: "Phone number must not be more than 10 digit" }),

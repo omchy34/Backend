@@ -32,5 +32,5 @@ import AddItemRouter from "./routes/AddItem.routes.js";
 
 //routes decleartion
 app.use("/api/v1/users", userRouter)
-app.use("/api/v1/Admin", AddItemRouter)
+app.use("/api/v1/users", AddItemRouter)
 export { app };
