@@ -1,7 +1,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary , deleteFromCloudinary} from "../utils/cloudinary.js";
 import { Additem } from "../modle/AddItem.modle.js";  // Ensure correct path
 
 const addItem = asyncHandler(async (req, res) => {
@@ -10,15 +10,6 @@ const addItem = asyncHandler(async (req, res) => {
     if ([ProductName, Description, Price , category].some(field => field?.trim() === "")) {
         throw new ApiError(400, "All fields are required");
     }
-
-    const existItem = await Additem.findOne({
-        $or: [{ ProductName }, { Description }],
-    });
-
-    if (existItem) {
-        throw new ApiError(409, "Product already exists");
-    }
-
     const imageLocalPath = req.files?.image?.[0]?.path;
 
     if (!imageLocalPath) {
@@ -46,4 +37,33 @@ const addItem = asyncHandler(async (req, res) => {
     return res.status(201).json(new ApiResponse(201, addedItem, "Item added successfully"));
 });
 
-export { addItem };
+const ListProduct = asyncHandler(async (req,res) => {
+    try {
+        const products = await Additem.find({});
+        return res.status(200).json(new ApiResponse(200, products, "Products listed successfully"));
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while listing the products");
+    }
+})
+
+const DeleteProduct = asyncHandler(async (req, res) => {
+    try {
+        const product = await Additem.findById(req.body.id);
+
+        if (!product) {
+            throw new ApiError(404, "Product not found");
+        }
+
+        // Delete image from Cloudinary
+        await deleteFromCloudinary(product.image);
+        
+        // Delete product from database
+        await Additem.findByIdAndDelete(req.body.id);
+
+        return res.status(200).json(new ApiResponse(200, product, "Product deleted successfully"));
+    } catch (error) {
+        throw new ApiError(500, "Something went wrong while deleting the product");
+    }
+});
+
+export { addItem , ListProduct , DeleteProduct};
