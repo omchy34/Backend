@@ -47,23 +47,29 @@ const ListProduct = asyncHandler(async (req,res) => {
 })
 
 const DeleteProduct = asyncHandler(async (req, res) => {
-    try {
-        const product = await Additem.findById(req.body.id);
+    const { id } = req.body; // Assuming you pass id in req.body
 
-        if (!product) {
-            throw new ApiError(404, "Product not found");
-        }
-
-        // Delete image from Cloudinary
-        await deleteFromCloudinary(product.image);
-        
-        // Delete product from database
-        await Additem.findByIdAndDelete(req.body.id);
-
-        return res.status(200).json(new ApiResponse(200, product, "Product deleted successfully"));
-    } catch (error) {
-        throw new ApiError(500, "Something went wrong while deleting the product");
+    if (!id) {
+        throw new ApiError(400, "Product ID is required");
     }
+
+    const product = await Additem.findById(id);
+
+    if (!product) {
+        throw new ApiError(404, "Product not found");
+    }
+
+    // Delete image from Cloudinary
+    const deleteImageResult = await deleteFromCloudinary(product.image);
+
+    if (!deleteImageResult) {
+        throw new ApiError(500, "Failed to delete image from Cloudinary");
+    }
+
+    // Delete product from database
+    await Additem.findByIdAndDelete(id);
+
+    return res.status(200).json(new ApiResponse(200, product, "Product deleted successfully"));
 });
 
 export { addItem , ListProduct , DeleteProduct};
