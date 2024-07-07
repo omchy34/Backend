@@ -10,7 +10,7 @@ const addItem = asyncHandler(async (req, res) => {
     if ([ProductName, Description, Price , category].some(field => field?.trim() === "")) {
         throw new ApiError(400, "All fields are required");
     }
-    const imageLocalPath = req.files?.image?.[0]?.path;
+    const imageLocalPath = req.files?.images?.[0]?.path;
 
     if (!imageLocalPath) {
         throw new ApiError(400, "Image file is required");
@@ -25,7 +25,7 @@ const addItem = asyncHandler(async (req, res) => {
         ProductName,
         Price,
         Description,
-        image: uploadImage.url,  // Assuming uploadOnCloudinary returns an object with url property
+        images: uploadImage.url,  // Assuming uploadOnCloudinary returns an object with url property
         category
     });
 
@@ -60,7 +60,7 @@ const DeleteProduct = asyncHandler(async (req, res) => {
     }
 
     // Delete image from Cloudinary
-    const deleteImageResult = await deleteFromCloudinary(product.image);
+    const deleteImageResult = await deleteFromCloudinary(product.images);
 
     if (!deleteImageResult) {
         throw new ApiError(500, "Failed to delete image from Cloudinary");

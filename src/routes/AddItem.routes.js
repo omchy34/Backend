@@ -12,7 +12,7 @@ import multer from "multer";
 const AddItemRouter = Router();
 
 AddItemRouter.route("/AddItem").post((req, res, next) => {
-  upload.fields([{ name: "image", maxCount: 1 }])(req, res, function (err) {
+  upload.fields([{ name: "images", maxCount: 1 }])(req, res, function (err) {
     if (err instanceof multer.MulterError) {
       next(new ApiError(400, err.message));
     } else if (err) {
