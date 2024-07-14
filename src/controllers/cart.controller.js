@@ -61,6 +61,62 @@ const AddToCart = asyncHandler(async (req, res) => {
   }
 });
 
+// Remove From Cart
+
+const RemoveFromCart = asyncHandler(async (req, res) => {
+  try {
+    const { productId } = req.body;
+    const userId = req.user._id; // Assuming req.user is set by your auth middleware
+
+    if (!productId) {
+      throw new ApiError(400, {}, "Product ID is required");
+    }
+
+    // // Log the input values
+    // console.log("Product ID:", productId);
+    // console.log("User ID:", userId);
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      throw new ApiError(404, {}, "User not found");
+    }
+
+    // Log user cartData before removing item
+    // console.log("User cartData before:", user.cartData);
+
+    // if (!Array.isArray(user.cartData)) {
+    //   console.error("cartData is not an array:", user.cartData);
+    //   throw new ApiError(500, {}, "Internal server error: cartData is not an array");
+    // }
+
+    const itemIndex = user.cartData.findIndex(item => {
+      console.log("item:", item);
+      console.log("Item productId:", item.productId);
+      console.log("Comparing with productId:", productId);
+      return item.productId.toString() === productId.toString();
+    });
+
+    if (itemIndex > -1) {
+      user.cartData.splice(itemIndex, 1); // Remove the item from the cart
+    } else {
+      throw new ApiError(404, {}, "Product not found in cart");
+    }
+
+    await user.save();
+
+    // Log user cartData after removing item
+    console.log("User cartData after:", user.cartData);
+
+    res.json(new ApiResponse(200, {}, "Item Removed From Cart"));
+  } catch (error) {
+    // Log the error
+    console.error("Error removing from cart:", error);
+    res.status(500).json(new ApiError(500, {}, `Error: ${error.message}`));
+  }
+});
+
+
 // Fetch user cart data
 const GetCart = asyncHandler(async (req, res) => {
   try {
@@ -78,4 +134,4 @@ const GetCart = asyncHandler(async (req, res) => {
   }
 });
 
-export { AddToCart, GetCart };
+export { AddToCart, RemoveFromCart ,GetCart };
