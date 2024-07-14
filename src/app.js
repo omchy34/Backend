@@ -7,7 +7,7 @@ const app = express();
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN ,
-    methods: "POST , GET , DELETE , PATCH , HEAD",
+    methods: "POST , GET , DELETE , PATCH , HEAD , PUT",
     credentials: true,
   })
 );
@@ -30,9 +30,11 @@ app.use(cookieParser());
 import userRouter from './routes/user.routes.js'
 import AddItemRouter from "./routes/AddItem.routes.js";
 import CartItemRouter from "./routes/Cart.routes.js"
+import PromoRouter from "./routes/PromoCodes.routes.js";
 
 //routes decleartion
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/users/Admin", AddItemRouter)
 app.use("/api/v1/users", CartItemRouter)
+app.use("/api/v1/Admin/", PromoRouter)
 export { app };
