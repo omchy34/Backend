@@ -40,6 +40,13 @@ const userSchema = new Schema({
   refreshToken: {
     type: String,
   },
+  cartData: [
+    {
+      productId : { type : mongoose.Schema.Types.ObjectId , ref : 'Additem'  },
+      quantity : { type : Number , required : true },
+    }
+  ]
+  
 });
 
 userSchema.pre("save", async function (next) {
@@ -51,7 +58,6 @@ userSchema.pre("save", async function (next) {
 });
 
 userSchema.methods.isPasswordCorrect = async function (password) {
-  console.log(bcrypt.compare(password, this.password));
   return await bcrypt.compare(password, this.password);
 };
 

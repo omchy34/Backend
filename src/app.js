@@ -29,8 +29,10 @@ app.use(cookieParser());
 // import routes
 import userRouter from './routes/user.routes.js'
 import AddItemRouter from "./routes/AddItem.routes.js";
+import CartItemRouter from "./routes/Cart.routes.js"
 
 //routes decleartion
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/users/Admin", AddItemRouter)
+app.use("/api/v1/users", CartItemRouter)
 export { app };

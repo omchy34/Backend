@@ -29,6 +29,7 @@ export const verifyJWT = asyncHandler(async (req, _, next) => {
 
     // Attach the user and token to the request object
     req.user = user;
+    req.userId = user._id;
     req.token = token;
 
     next();
