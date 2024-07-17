@@ -69,6 +69,24 @@ const registerUser = asyncHandler(async (req, res) => {
   return res.status(201).json(new ApiResponse(201, createdUser, "User Registered successfully"));
 });
 
+// fetch all users 
+const fetchUsers = asyncHandler(async (req, res) => {
+  const users = await User.find().select("-password -refreshToken");
+  if (!users) { 
+    throw new ApiError(500, "Something went wrong while fetching users");
+    }
+    return res.status(200).json(new ApiResponse(200, users, "Users fetched successfully"));
+})
+
+//delete user Form DB
+const deleteUser = asyncHandler(async (req, res) => {
+  const user = await User.findByIdAndDelete(req.params.id);
+  if (!user) {
+    throw new ApiError(404, "User not found");
+  }
+  return res.json(new ApiResponse(200, user, "User deleted successfully"));
+})
+
 
 const LoginUser = asyncHandler(async (req, res) => {
   // req.body - data
@@ -212,4 +230,4 @@ const userData = asyncHandler(async (req, res) => {
   }
 })
 
-export { registerUser, LoginUser, refreshAccessToken, userData };
+export { registerUser, fetchUsers , deleteUser , LoginUser, refreshAccessToken, userData };

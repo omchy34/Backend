@@ -31,10 +31,13 @@ import userRouter from './routes/user.routes.js'
 import AddItemRouter from "./routes/AddItem.routes.js";
 import CartItemRouter from "./routes/Cart.routes.js"
 import PromoRouter from "./routes/PromoCodes.routes.js";
+import orderRouter from './routes/Order.routes.js'
 
 //routes decleartion
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/users/Admin", AddItemRouter)
 app.use("/api/v1/users", CartItemRouter)
 app.use("/api/v1/Admin/", PromoRouter)
+app.use("/api/v1/order", orderRouter)
+
 export { app };

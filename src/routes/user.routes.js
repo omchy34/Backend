@@ -3,12 +3,14 @@ import {
   LoginUser,
   refreshAccessToken,
   registerUser,
+  fetchUsers,
+  deleteUser,
   userData,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewere/multer.middlewere.js";
 import { verifyJWT } from "../middlewere/Auth.middlewere.js";
 import multer from "multer";
-import { validate } from "../middlewere/validations.middlewere.js"
+import { validate } from "../middlewere/validations.middlewere.js";
 import { signupSchema } from "../Validations/user.Rej.validations.js";
 
 const router = Router();
@@ -16,9 +18,8 @@ const router = Router();
 console.log("validate:", validate); // Should log the validate function
 console.log("registerUser:", registerUser); // Should log the registerUser function
 
-router
-  .route("/Register")
-  .post((req, res, next) => {
+router.route("/Register").post(
+  (req, res, next) => {
     upload.fields([{ name: "avatar", maxCount: 1 }])(req, res, function (err) {
       if (err instanceof multer.MulterError) {
         next(new ApiError(400, err.message));
@@ -28,7 +29,13 @@ router
         next();
       }
     });
-  }, validate(signupSchema), registerUser);
+  },
+  validate(signupSchema),
+  registerUser
+);
+
+router.route("/fetchUsers").post(fetchUsers);
+router.route("/deleteUser/:id").delete(deleteUser);
 
 router.route("/Login").post(LoginUser);
 
