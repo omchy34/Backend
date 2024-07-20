@@ -17,30 +17,31 @@ const AddToCart = asyncHandler(async (req, res) => {
     }
 
     const user = await User.findById(userId);
-
     if (!user) {
       throw new ApiError(404, {}, "User not found");
     }
 
-    // Check if the product already exists in cart
-    let existingItem = user.cartData.find(item => item.productId.toString() === productId.toString());
+    // Find the index of the item with the given productId
+    const itemIndex = user.cartData.findIndex(item => item.productId.toString() === productId);
 
-    if (existingItem) {
-      // If exists, update the quantity
-      existingItem.quantity = quantity;
+    if (itemIndex > -1) {
+      // Update the quantity of the existing item
+      user.cartData[itemIndex].quantity = quantity;
     } else {
-      // If not exists, add new item to cart
+      // Add the new item if it doesn't already exist
       user.cartData.push({ productId, quantity });
     }
 
     await user.save();
-
-    res.json(new ApiResponse(200, {}, "Item Added To Cart"));
+    console.log(user.cartData);
+    res.json(new ApiResponse(200, {}, "Item added to cart"));
+    
   } catch (error) {
     console.error("Error adding to cart:", error);
     res.status(500).json(new ApiError(500, {}, `Error: ${error.message}`));
   }
 });
+
 
 
 const RemoveFromCart = asyncHandler(async (req, res) => {
@@ -72,6 +73,7 @@ const RemoveFromCart = asyncHandler(async (req, res) => {
   }
 });
 
+// Admin 
 const GetCart = asyncHandler(async (req, res) => {
   try {
     const userId = req.user._id;

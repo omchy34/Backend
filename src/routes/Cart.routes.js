@@ -6,6 +6,6 @@ const CartItemRouter = Router();
 
 CartItemRouter.route("/AddToCart").post(verifyJWT, AddToCart);
 CartItemRouter.route("/RemoveFromCart").post(verifyJWT, RemoveFromCart);
-CartItemRouter.route("/GetCart").get(verifyJWT, GetCart); // Changed to GET
+CartItemRouter.route("/GetCart").get(verifyJWT, GetCart); // Changed to GET FOR ADMIN ONLY 
 
 export default CartItemRouter ;
