@@ -10,8 +10,7 @@ const OrderSchema = new Schema({
     items: [OrderItemSchema],
     amount: { type: Number, default: 0 },
     address: { type: Object, required: true },
-    status: { type: String, default: "processing", required: true },
-    paymentStatus: { type: Boolean, default: false, required: true },
+    paymentStatus: { type: String},
     createdAt: { type: Date, default: Date.now },
 });
 
