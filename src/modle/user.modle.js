@@ -43,6 +43,8 @@ const userSchema = new Schema({
   cartData: [
     {
       productId : { type : mongoose.Schema.Types.ObjectId , ref : 'Additem'  },
+      ProductName : {type: String , required : true} ,
+      ProductImg : {type: String , required : true} ,
       quantity : { type : Number , required : true },
     }
   ]

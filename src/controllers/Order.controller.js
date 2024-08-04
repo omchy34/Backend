@@ -1,117 +1,158 @@
 import Razorpay from "razorpay";
-import crypto from "crypto";
-import { Order } from "../modle/Order.modle.js";
-import { User } from "../modle/user.modle.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { User } from "../modle/user.modle.js";
+import { Additem } from "../modle/AddItem.modle.js";
+import { Order } from "../modle/Order.modle.js";
+import crypto from "crypto";
 
 const placeOrder = asyncHandler(async (req, res) => {
   try {
+    const { items, amount } = req.body;
+    const userId = req.user._id;
+
+    if (!items || items.length === 0) {
+      throw new ApiError(400, "Order items are required");
+    }
+
+    if (!amount) {
+      throw new ApiError(400, "Amount is required");
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new ApiError(404, "User not found");
+    }
+
+    const orderItems = await Promise.all(
+      items.map(async (item) => {
+        const product = await Additem.findById(item.productId);
+        if (!product) {
+          throw new ApiError(404, `Product not found: ${item.productId}`);
+        }
+
+        return {
+          productId: product._id,
+          quantity: item.quantity,
+          address: item.address, // Correctly reference the address here
+          ProductName: product.ProductName,
+          ProductImg: product.images,
+        };
+      })
+    );
+
+    const newOrder = new Order({
+      items: orderItems,
+      user: userId,
+      amount,
+      paymentStatus: "pending",
+    });
+    await newOrder.save();
+
+    // Generate Razorpay order
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,
       key_secret: process.env.RAZORPAY_SECRET_KEY,
     });
 
-    const { items, address, amount } = req.body;
-    const userId = req.user._id;
-
-    if (!items || !address) {
-      throw new ApiError(400, "Missing required fields");
-    }
-
-    const newOrder = new Order({
-      user: userId,
-      items,
-      amount,
-      address,
-    });
-
-    await newOrder.save();
-    await User.findByIdAndUpdate(userId, { cartData: [] });
-
     const options = {
-      amount: amount * 100, // Amount in paise
+      amount: amount * 100, // amount in paise
       currency: "INR",
       receipt: newOrder._id.toString(),
     };
 
     const razorpayOrder = await razorpay.orders.create(options);
 
-    return res.status(200).json(
+    res.json(
       new ApiResponse(
         200,
         {
           orderId: newOrder._id,
           razorpayOrderId: razorpayOrder.id,
-          items,
-          amount: razorpayOrder.amount / 100,
-          address,
-          currency: razorpayOrder.currency,
-          paymentStatus: "created",
-          clearCart: true,
+          amount,
+          newOrder,
         },
         "Order placed successfully"
       )
     );
   } catch (error) {
-    console.error("Order placement error:", error);
-    throw new ApiError(500, error.message);
+    console.error("Error placing order:", error);
+    res.status(500).json(new ApiError(500, `Error: ${error.message}`));
   }
 });
 
 const verify = asyncHandler(async (req, res) => {
   try {
-    const { Payment_Id, Order_Id , Signature, amount, items, address } = req.body;
+    const { Payment_Id, Order_Id, Signature, newOrder } = req.body;
 
-    // // Verify the signature
-    // const hmac = crypto.createHmac('sha256', process.env.RAZORPAY_SECRET_KEY);
-    // hmac.update(`${Payment_Id}`);
-    // const generatedSignature = hmac.digest('hex');
+   
 
-    // if (generatedSignature !== Signature) {
-    //   throw new ApiError(400, "Invalid payment signature");
-    // }
+    // Find the existing order and update its status
+    const order = await Order.findById(newOrder._id);
+    if (!order) {
+      throw new ApiError(404, "Order not found");
+    }
 
-    const orderConfirm = await Order.create({
-      user: req.user._id ,
-      Payment_Id,
-      Order_Id,
-      Signature,
-      amount,
-      items ,
-      address,
-      paymentStatus: "paid"
-    });
+    order.paymentStatus = "Paid";
+    await order.save();
 
-    res.json(new ApiResponse(200, { orderConfirm }, "Payment successful"));
+    res.json(new ApiResponse(200, { order }, "Payment successful"));
   } catch (error) {
     console.error("Payment verification error:", error);
-    throw new ApiError(500, error.message);
+    res.status(500).json(new ApiError(500, `Error: ${error.message}`));
   }
 });
 
-const SuccessOrder = asyncHandler(async(req,res) => {
+
+const SuccessOrder = asyncHandler(async (req, res) => {
   try {
     const user = req.user._id;
-    console.log("user :" , user);
-    const order = await Order.find({user})
-    res.json(new ApiResponse(200, {order}, "Order Success"));
+    const order = await Order.find({ user });
+    res.json(new ApiResponse(200, { order }, "Order Success"));
   } catch (error) {
-    res.json(new ApiError(401 , {} , "Error on server side "))
+    res.json(new ApiError(401, {}, "Error on server side"));
   }
-})
+});
 
-const GetAllOrders = asyncHandler(async (req , res) => {
+const GetAllOrders = asyncHandler(async (req, res) => {
   try {
-    // const user = req.user ;
-    // console.log("allUser :" , user);
-    const order = await Order.find() ;
-    // console.log(order);
-    res.json(new ApiResponse(200, {order}, "Order Success"));
+    
+    const order = await Order.find()
+    console.log("ok");
+
+    const allData = await Order.aggregate([
+      {
+        $lookup: {
+          from: "users",
+          localField: "user",
+          foreignField: "_id",
+          as: "userDetails"
+        }
+      } , 
+      {
+        $addFields: {
+          userDetails: {
+            $arrayElemAt : ["$userDetails" , 0]
+          }
+        }
+      }
+    ])
+   
+    res.json(new ApiResponse(200, { allData }, "Order Success"));
   } catch (error) {
-    res.json(new ApiError(401 , {} , "Error on server side "))
+    res.json(new ApiError(401, {error}, "Error on server side"));
   }
+});
+
+const DeleteOrder = asyncHandler(async(req , res)=>{
+  const { requestId } = req.params; 
+  const OrderReq = await Order.findByIdAndDelete(requestId) ;
+  if(!OrderReq){
+    throw new ApiError(404 , "Order request not find")
+  }
+
+  res.json(new ApiResponse(200 , "Order item deleted..."))
 })
 
-export { placeOrder, verify , SuccessOrder , GetAllOrders};
+export { placeOrder, verify, SuccessOrder, GetAllOrders , DeleteOrder};
