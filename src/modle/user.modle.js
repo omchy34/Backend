@@ -47,7 +47,12 @@ const userSchema = new Schema({
       ProductImg : {type: String , required : true} ,
       quantity : { type : Number , required : true },
     }
-  ]
+  ] ,
+  
+  isAdmin : {
+    type : Boolean ,
+    default : false
+  }
   
 });
 
