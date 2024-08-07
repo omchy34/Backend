@@ -4,40 +4,33 @@ import cors from "cors";
 
 const app = express();
 
-app.use(
-  cors({
-    origin: process.env.CORS_ORIGIN ,
-    methods: "POST , GET , DELETE , PATCH , HEAD , PUT",
-    credentials: true,
-  })
-);
+// Define CORS options
+const corsOptions = {
+  origin: [process.env.FRONTEND_CORS_ORIGIN, process.env.ADMIN_CORS_ORIGIN],
+  methods: ["GET", "POST", "DELETE", "PATCH", "HEAD", "PUT"],
+  credentials: true,
+};
+
+// Apply CORS middleware
+app.use(cors(corsOptions));
 
 app.use(express.json({ limit: "100kb" }));
-
-// app.use(express.urlencoded({ extended: true }));
-
-app.use(
-  express.urlencoded({
-    extended: true,
-    limit: "1mb",
-  })
-);
+app.use(express.urlencoded({ extended: true, limit: "1mb" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-
-// import routes
-import userRouter from './routes/user.routes.js'
+// Import routes
+import userRouter from './routes/user.routes.js';
 import AddItemRouter from "./routes/AddItem.routes.js";
-import CartItemRouter from "./routes/Cart.routes.js"
+import CartItemRouter from "./routes/Cart.routes.js";
 import PromoRouter from "./routes/PromoCodes.routes.js";
-import orderRouter from './routes/Order.routes.js'
+import orderRouter from './routes/Order.routes.js';
 
-//routes decleartion
-app.use("/api/v1/users", userRouter)
-app.use("/api/v1/users/Admin", AddItemRouter)
-app.use("/api/v1/users", CartItemRouter)
-app.use("/api/v1/Admin/", PromoRouter)
-app.use("/api/v1/order", orderRouter)
+// Routes declaration
+app.use("/api/v1/users", userRouter);
+app.use("/api/v1/users/Admin", AddItemRouter);
+app.use("/api/v1/users", CartItemRouter);
+app.use("/api/v1/Admin/", PromoRouter);
+app.use("/api/v1/order", orderRouter);
 
 export { app };

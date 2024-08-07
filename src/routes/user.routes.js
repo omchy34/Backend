@@ -8,7 +8,7 @@ import {
   userData,
 } from "../controllers/user.controllers.js";
 import { upload } from "../middlewere/multer.middlewere.js";
-import { verifyJWT } from "../middlewere/Auth.middlewere.js";
+import { verifyJWT , verifyAdminJWT } from "../middlewere/Auth.middlewere.js";
 import multer from "multer";
 import { validate } from "../middlewere/validations.middlewere.js";
 import { signupSchema } from "../Validations/user.Rej.validations.js";
@@ -34,8 +34,8 @@ router.route("/Register").post(
   registerUser
 );
 
-router.route("/fetchUsers").post(fetchUsers);
-router.route("/deleteUser/:id").delete(deleteUser);
+router.route("/fetchUsers").post( verifyAdminJWT , fetchUsers);
+router.route("/deleteUser/:id").delete( verifyAdminJWT , deleteUser);
 
 router.route("/Login").post(LoginUser);
 
