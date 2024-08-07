@@ -126,10 +126,10 @@ const LoginUser = asyncHandler(async (req, res) => {
     "-password -refreshToken"
   );
 
-  const options = {
-    httpOnly: true,
-    // secure: true,
-  };
+  // const options = {
+  //   httpOnly: true,
+  //   // secure: true,
+  // };
   // console.log(accessToken);
   // console.log(refreshToken);
 
