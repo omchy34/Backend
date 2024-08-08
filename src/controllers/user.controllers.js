@@ -113,41 +113,32 @@ const LoginUser = asyncHandler(async (req, res) => {
     throw new ApiError(404, "user dose not exist");
   }
 
-  const isPasswordValid = await user.isPasswordCorrect(password);
-  console.log(isPasswordValid);
-  if (!isPasswordValid) {
-    throw new ApiError(401, "invalid user crendatials");
-  }
-  const { accessToken, refreshToken } = await generateAccessAndRefreshtoken(
-    user._id
-  );
+   if ((user.isAdmin === false)) {
+    if (!user) {
+      throw new ApiError(404, "user dose not exist");
+    }
 
-  const loggedInUser = await User.findById(user._id).select(
-    "-password -refreshToken"
-  );
+    const isPasswordValid = await user.isPasswordCorrect(password);
+    console.log(isPasswordValid);
+    if (!isPasswordValid) {
+      throw new ApiError(401, "invalid user crendatials");
+    }
+    const { accessToken } = await generateAccessAndRefreshtoken(user._id);
 
-  // const options = {
-  //   httpOnly: true,
-  //   // secure: true,
-  // };
-  // console.log(accessToken);
-  // console.log(refreshToken);
-
-
-  return res
-    .status(200)
-    // .cookie("accessToken", accessToken , options)
-    // .cookie("refreshToken", refreshToken , options)
-    .json(
-      new ApiResponse(
-        200,
-        {
-          loggedInUser,
-          accessToken,
-          refreshToken,
-        },
-        "user LoggedIn successFully "
-      ),
+    const loggedInUser = await User.findById(user._id).select(
+      "-password -refreshToken"
+    );
+    return (
+      res.json(
+          new ApiResponse(
+            200,
+            {
+              loggedInUser,
+              accessToken,
+            },
+            "user LoggedIn successFully "
+          )
+        )
     );
 });
 
