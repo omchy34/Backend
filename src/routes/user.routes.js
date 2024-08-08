@@ -34,7 +34,7 @@ router.route("/Register").post(
   registerUser
 );
 
-router.route("/fetchUsers").post( verifyAdminJWT , fetchUsers);
+router.route("/fetchUsers").post(  fetchUsers);
 router.route("/deleteUser/:id").delete( verifyAdminJWT , deleteUser);
 
 router.route("/Login").post(LoginUser);
