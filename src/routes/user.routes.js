@@ -1,7 +1,6 @@
 import { Router } from "express";
 import {
   LoginUser,
-  refreshAccessToken,
   registerUser,
   fetchUsers,
   deleteUser,
@@ -41,7 +40,6 @@ router.route("/deleteUser/:id").delete( verifyAdminJWT , deleteUser);
 router.route("/Login").post(LoginUser);
 
 // secured Routes
-router.route("/refresh-Token").post(refreshAccessToken);
 router.route("/userData").post(verifyJWT, userData);
 router.route("/AdminLogin").post(AdminLogin) ;
 
