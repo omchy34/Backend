@@ -128,8 +128,7 @@ const LoginUser = asyncHandler(async (req, res) => {
     const loggedInUser = await User.findById(user._id).select(
       "-password -refreshToken"
     );
-    return (
-      res.json(
+    return res.json(
           new ApiResponse(
             200,
             {
@@ -137,7 +136,6 @@ const LoginUser = asyncHandler(async (req, res) => {
               accessToken,
             },
             "user LoggedIn successFully "
-          )
         )
     );
 });
