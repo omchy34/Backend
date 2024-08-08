@@ -25,8 +25,7 @@ AddItemRouter.route("/AddItem").post(
   asyncHandler(addItem) // Wrap addItem with asyncHandler
 );
 
-// Route to list products without verification middleware
-AddItemRouter.route("/ProductList").post(asyncHandler(ListProduct)); // Wrap ListProduct with asyncHandler
+AddItemRouter.route("/ProductList").post( verifyAdminJWT , ListProduct); // Wrap ListProduct with asyncHandler
 
 // Route to delete a product with verification middleware
 AddItemRouter.route("/DeleteProduct").post(
