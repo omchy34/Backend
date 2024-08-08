@@ -12,11 +12,12 @@ import { verifyJWT , verifyAdminJWT } from "../middlewere/Auth.middlewere.js";
 import multer from "multer";
 import { validate } from "../middlewere/validations.middlewere.js";
 import { signupSchema } from "../Validations/user.Rej.validations.js";
-
+import { AdminLogin } from "../controllers/Admin.controller.js";
 const router = Router();
 
 console.log("validate:", validate); // Should log the validate function
 console.log("registerUser:", registerUser); // Should log the registerUser function
+
 
 router.route("/Register").post(
   (req, res, next) => {
@@ -42,5 +43,6 @@ router.route("/Login").post(LoginUser);
 // secured Routes
 router.route("/refresh-Token").post(refreshAccessToken);
 router.route("/userData").post(verifyJWT, userData);
+router.route("/AdminLogin").post(AdminLogin) ;
 
 export default router;
