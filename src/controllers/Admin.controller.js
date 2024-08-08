@@ -6,6 +6,28 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
+
+
+const generateAccessAndRefreshtoken = async (userId) => {
+    try {
+      const user = await User.findById(userId);
+      const accessToken = await user.generateAccessToken();
+      // console.log(accessToken);
+      const refreshToken = await user.generateRefreshToken();
+      // console.log(refreshToken);
+      user.refreshToken = refreshToken;
+      await user.save({ validateBeforeSave: false });
+  
+      return { accessToken, refreshToken };
+    } catch (error) {
+      throw new ApiError(
+        500,
+        `something  went wrong while creating user ${error}`
+      );
+    }
+  };
+  
+
 export const AdminLogin = asyncHandler(async (req, res) => {
   
     const { identifier, password } = req.body;
