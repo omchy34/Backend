@@ -72,4 +72,16 @@ const DeleteProduct = asyncHandler(async (req, res) => {
     return res.status(200).json(new ApiResponse(200, product, "Product deleted successfully"));
 });
 
-export { addItem , ListProduct , DeleteProduct};
+const ProductDetails = asyncHandler(async(req , res)=> {
+    const { id } = req.params ;
+    const ProductDetails = await Additem.findById(id) ;
+
+    if(!ProductDetails){
+        throw new ApiError(404 , "Product not found")
+    }
+
+    res.json(new ApiResponse(200 , ProductDetails , "product founded"))
+
+})
+
+export { addItem , ListProduct , DeleteProduct , ProductDetails};
