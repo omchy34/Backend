@@ -26,7 +26,7 @@ AddItemRouter.route("/AddItem").post(
   asyncHandler(addItem) // Wrap addItem with asyncHandler
 );
 
-AddItemRouter.route("/ProductList").post( verifyAdminJWT , ListProduct); // Wrap ListProduct with asyncHandler
+AddItemRouter.route("/ProductList").post(  ListProduct); // Wrap ListProduct with asyncHandler
 
 
 AddItemRouter.route("/ProductDetails/:id").post(verifyAdminJWT , ProductDetails)
