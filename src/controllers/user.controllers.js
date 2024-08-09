@@ -85,16 +85,66 @@ const LoginUser = asyncHandler(async (req, res) => {
     // acces and refresh token
     //  send cookie
 
-    const { email, password } = req.body;
+    const { identifier, password } = req.body;
 
     console.log(req.body);
 
-    if (!email) {
+    if (!identifier) {
         throw new ApiError(400, " email is required");
     }
 
-    const user = await User.findOne({
-        $or: [{ email: email }],
+    const user = await User.find({
+        $or: [{ const LoginUser = asyncHandler(async (req, res) => {
+            // req.body - data
+            // username or eamil
+            // find user
+            // passwordcheck
+            // acces and refresh token
+            //  send cookie
+        
+            const { identifier, password } = req.body;
+        
+            console.log(req.body);
+        
+            if (!identifier) {
+                throw new ApiError(400, " email is required");
+            }
+        
+            const user = await User.findOne({
+                $or: [{ email: identifier }, { userName: identifier }],
+            });
+        
+            if ((user.isAdmin === false)) {
+                if (!user) {
+                    throw new ApiError(404, "user dose not exist");
+                }
+        
+                const isPasswordValid = await user.isPasswordCorrect(password);
+                console.log(isPasswordValid);
+                if (!isPasswordValid) {
+                    throw new ApiError(401, "invalid user crendatials");
+                }
+                const { accessToken } = await generateAccessAndRefreshtoken(user._id);
+        
+                const loggedInUser = await User.findById(user._id).select(
+                    "-password -refreshToken"
+                );
+                return (
+                    res.json(
+                        new ApiResponse(
+                            200,
+                            {
+                                loggedInUser,
+                                accessToken,
+                            },
+                            "user LoggedIn successFully "
+                        )
+                    )
+                );
+            } else {
+                throw new ApiError(400, {}, "Please Dont  try to access")
+            }
+        
     });
 
     if ((user.isAdmin === false)) {
