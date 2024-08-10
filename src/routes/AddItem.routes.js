@@ -29,7 +29,7 @@ AddItemRouter.route("/AddItem").post(
 AddItemRouter.route("/ProductList").post(ListProduct); // Wrap ListProduct with asyncHandler
 
 
-AddItemRouter.route("/ProductDetails/:id").post(verifyAdminJWT , ProductDetails)
+AddItemRouter.route("/ProductDetails/:id").post( ProductDetails)
 // Route to delete a product with verification middleware
 AddItemRouter.route("/DeleteProduct").post(
   verifyAdminJWT, // Apply middleware only to this route
